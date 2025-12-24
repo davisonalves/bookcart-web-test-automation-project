@@ -1,0 +1,24 @@
+services:
+  database:
+    image: davisonalves/bookcart-database:latest
+    container_name: bookcart-database
+    ports:
+     - "1433:1433"
+    networks: 
+      - bookcart-network
+
+  bookcart:
+    image: davisonalves/bookcart:latest
+    container_name: bookcart
+    ports:
+     - "8080:8080"
+    environment:
+     - ConnectionStrings__DefaultConnection=Server=bookcart-database;Database=master;User Id=sa;Password=Mystrong_password123;TrustServerCertificate=True
+    depends_on: 
+     - database
+    networks: 
+      - bookcart-network
+
+networks:
+  bookcart-network:
+    driver: bridge
