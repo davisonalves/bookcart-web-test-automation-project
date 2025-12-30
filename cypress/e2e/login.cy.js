@@ -16,6 +16,16 @@ describe('Feature > Login', () => {
         .should('contain.text', 'adminuser')
         .and('contain.text', 'Admin Panel')
     })
+
+    it('The password is displayed when you click the preview icon.', () => {
+      cy.get('div[class="mat-mdc-form-field-icon-suffix"] mat-icon').should('contain.text', 'visibility_off')
+
+      cy.performLogin('adminuser', 'qwerty', false)
+      cy.get('div[class="mat-mdc-form-field-icon-suffix"] mat-icon').click()
+
+      cy.get('div[class="mat-mdc-form-field-icon-suffix"] mat-icon').should('contain.text', 'visibility')
+      cy.get('input[placeholder="Password"]').should('have.value', 'qwerty')
+    })
   })
 
   context('Error handling', () => {
@@ -40,8 +50,7 @@ describe('Feature > Login', () => {
     { name: 'Password', selector: 'input[placeholder="Password"]'}]
     requiredFields.forEach(field => {
       it(`A message is displayed when a required field is not filled in (example: ${field.name})`, () => {
-        cy.get('input[placeholder="Username"]').type('adminuser')
-        cy.get('input[placeholder="Password"]').type('qwerty')
+        cy.performLogin('adminuser', 'qwerty', false)
         
         cy.get(field.selector)
           .clear()
