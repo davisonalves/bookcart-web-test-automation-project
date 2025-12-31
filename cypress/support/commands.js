@@ -1,4 +1,4 @@
-Cypress.Commands.add('performLogin', (username, password, submit = true) => {
+Cypress.Commands.add('performLogin', (username, password, { submit = true } = {}) => {
   if (username) cy.get('input[placeholder="Username"]').type(username)
   if (password) cy.get('input[placeholder="Password"]').type(password)
 

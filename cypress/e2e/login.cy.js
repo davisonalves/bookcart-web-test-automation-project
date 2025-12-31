@@ -1,10 +1,15 @@
-describe('Feature > Login', () => {
-  beforeEach('Visit', () => {
+describe('Feature > Login', function () {
+  beforeEach('Setup Page and Aliases', function () {
     cy.visit('/login')
+
+    cy.get('mat-toolbar[class*=mat-toolbar]').as('headerToolbar')
+    cy.get('div[class="mat-mdc-form-field-icon-suffix"] mat-icon').as('passwordVisibilityIcon')
+    cy.get('input[placeholder="Password"]').as('passwordInput')
+    cy.get('input[placeholder="Username"]').as('usernameInput')
   })
 
-  context('Happy Path', () => {
-    it('Login performed successfully by entering valid credentials', () => {
+  context('Happy Path', function () {
+    it('Login performed successfully by entering valid credentials', function () {
       cy.performLogin('adminuser', 'qwerty')
 
       cy.get('@loginRequest')
@@ -12,24 +17,24 @@ describe('Feature > Login', () => {
         .should('eq', 200)
 
       cy.url().should('not.include', '/login')
-      cy.get('mat-toolbar[class*=mat-toolbar]')
+      cy.get('@headerToolbar')
         .should('contain.text', 'adminuser')
         .and('contain.text', 'Admin Panel')
     })
 
-    it('The password is displayed when you click the preview icon.', () => {
-      cy.get('div[class="mat-mdc-form-field-icon-suffix"] mat-icon').should('contain.text', 'visibility_off')
+    it('The password is displayed when you click the preview icon.', function () {
+      cy.get('@passwordVisibilityIcon').should('contain.text', 'visibility_off')
 
-      cy.performLogin('adminuser', 'qwerty', false)
-      cy.get('div[class="mat-mdc-form-field-icon-suffix"] mat-icon').click()
+      cy.performLogin('adminuser', 'qwerty', { submit: false })
+      cy.get('@passwordVisibilityIcon').click()
 
-      cy.get('div[class="mat-mdc-form-field-icon-suffix"] mat-icon').should('contain.text', 'visibility')
-      cy.get('input[placeholder="Password"]').should('have.value', 'qwerty')
+      cy.get('@passwordVisibilityIcon').should('contain.text', 'visibility')
+      cy.get('@passwordInput').should('have.value', 'qwerty')
     })
   })
 
-  context('Error handling', () => {
-    it('Access is denied by informing invalid password for registered user', () => {
+  context('Error handling', function () {
+    it('Access is denied by informing invalid password for registered user', function () {
       cy.performLogin('adminuser', 'wrongpassword')
 
       cy.get('@loginRequest')
@@ -39,28 +44,23 @@ describe('Feature > Login', () => {
       cy.get('mat-error')
         .should('contain.text', 'Login Failed. Username or Password is incorrect.')
 
-      cy.get('input[placeholder="Username"]')
+      cy.get('@usernameInput')
         .should('be.empty')
-      cy.get('input[placeholder="Password"]')
+      cy.get('@passwordInput')
         .should('be.empty')
     })
 
-    const requiredFields = [
-    { name: 'Username', selector: 'input[placeholder="Username"]'},
-    { name: 'Password', selector: 'input[placeholder="Password"]'}]
-    requiredFields.forEach(field => {
-      it(`A message is displayed when a required field is not filled in (example: ${field.name})`, () => {
-        cy.performLogin('adminuser', 'qwerty', false)
+    const requiredFields = ['Username', 'Password']
+    requiredFields.forEach(fieldName => {
+      it(`A message is displayed when a required field is not filled in (example: ${fieldName})`, function () {
+        cy.performLogin('adminuser', 'qwerty', { submit: false })
         
-        cy.get(field.selector)
-          .clear()
+        cy.get(`input[placeholder="${fieldName}"]`).clear()
 
-        cy.get('form button')
-          .contains('Login')
-          .click()
+        cy.contains('form button', 'Login').click()
 
-        cy.get('mat-error')
-          .should('contain.text', `${field.name} is required`)
+        cy.contains('mat-error', `${fieldName} is required`)
+          .should('be.visible')
       })
     })
   })
