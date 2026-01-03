@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/davisonalves/bookcart-web-test-automation-project#readme",
   "devDependencies": {
-    "cypress": "^15.8.1"
+    "cypress": "^15.8.1",
+    "mssql": "^12.2.0"
   }
 }
