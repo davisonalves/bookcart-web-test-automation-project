@@ -63,5 +63,48 @@ describe('Feature > Register', function () {
       cy.contains('mat-error', 'User Name is not available')
         .should('be.visible')
     })
+
+    it('A message is displayed when a required field is not filled in ', function () {      
+      cy.get('@firstNameInput').focus()
+      cy.press(Cypress.Keyboard.Keys.TAB)
+
+      cy.get('@lastNameInput').focus()
+      cy.press(Cypress.Keyboard.Keys.TAB)
+
+      cy.get('@userNameInput').focus()
+      cy.press(Cypress.Keyboard.Keys.TAB)
+
+      cy.get('@passwordInput').focus()
+      cy.press(Cypress.Keyboard.Keys.TAB)
+
+      cy.get('@confirmPasswordInput').focus()
+      cy.press(Cypress.Keyboard.Keys.TAB)
+
+      cy.get('@maleGenderRadio').focus()
+      cy.press(Cypress.Keyboard.Keys.TAB)
+
+      cy.contains('mat-error', 'First Name is required')
+        .should('be.visible')
+
+      cy.contains('mat-error', 'Last Name is required')
+        .should('be.visible')
+    
+      cy.contains('mat-error', 'User Name is required')
+        .should('be.visible')
+
+      cy.contains('mat-error', 'Password is required')
+        .should('be.visible')
+
+      cy.contains('mat-error', 'Gender is required')
+        .should('be.visible')
+    })
+
+
+    /* TODO
+    
+    A message is displayed when the password confirmation does not match the password
+    The password strength is evaluated when the user types a password
+    The password is displayed when you click the preview icon
+    */
   })
 })
