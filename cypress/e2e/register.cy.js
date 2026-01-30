@@ -99,12 +99,33 @@ describe('Feature > Register', function () {
         .should('be.visible')
     })
 
+    it('A message is displayed when the password confirmation does not match the password', function () {
+      cy.get('@firstNameInput').type('Real')
+      cy.get('@lastNameInput').type('User')
 
-    /* TODO
-    
-    A message is displayed when the password confirmation does not match the password
-    The password strength is evaluated when the user types a password
-    The password is displayed when you click the preview icon
-    */
+      cy.get('@userNameInput').type('realuser')
+
+      cy.get('@passwordInput').type('StrongPassword123')
+      cy.get('@confirmPasswordInput').type('WrongPassword123')
+
+      cy.press(Cypress.Keyboard.Keys.TAB)
+
+      cy.contains('mat-error', 'Password do not match')
+        .should('be.visible')
+    })
+
+    it('The password strength is evaluated when the user types a password', function () {
+      cy.get('@firstNameInput').type('Real')
+      cy.get('@lastNameInput').type('User')
+
+      cy.get('@userNameInput').type('realuser')
+
+      cy.get('@passwordInput').type('password')
+
+      cy.press(Cypress.Keyboard.Keys.TAB)
+
+      cy.contains('mat-error', 'Password should have minimum 8 characters, at least 1 uppercase letter, 1 lowercase letter and 1 number')
+        .should('be.visible')
+    })
   })
 })
