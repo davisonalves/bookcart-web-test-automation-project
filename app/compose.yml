@@ -2,6 +2,8 @@ services:
   database:
     image: davisonalves/bookcart-database:latest
     container_name: bookcart-database
+    volumes:
+     - bookcart-database-data:/var/opt/mssql
     ports:
      - "1433:1433"
     networks: 
@@ -22,3 +24,6 @@ services:
 networks:
   bookcart-network:
     driver: bridge
+
+volumes:
+  bookcart-database-data:
